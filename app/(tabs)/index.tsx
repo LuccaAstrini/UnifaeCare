@@ -1,98 +1,95 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Alert
+} from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function RecuperarSenha() {
+  const [email, setEmail] = useState('');
 
-export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.backText}>← UNIFAE Care</Text>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <View style={styles.content}>
+          <View style={styles.logoBox}>
+            <View style={styles.logoIcon}>
+               <Text style={{color: '#fff', fontSize: 20}}>U</Text>
+            </View>
+            <Text style={styles.logoText}>unifae care</Text>
+          </View>
+
+          <Text style={styles.mainTitle}>Recuperar Senha</Text>
+          <Text style={styles.description}>
+            Insira seu e-mail para receber um código de 8 dígitos para redefinir sua conta.
+          </Text>
+
+          <View style={styles.card}>
+            <Text style={styles.label}>ENDEREÇO DE E-MAIL</Text>
+            <View style={styles.inputRow}>
+              <Text style={styles.mailEmoji}>✉️</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="seu@email.com"
+                placeholderTextColor="#999"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <TouchableOpacity 
+              style={styles.btn}
+              onPress={() => Alert.alert('Sucesso', 'Código enviado para: ' + email)}
+            >
+              <Text style={styles.btnText}>Enviar Código de Recuperação</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.backLink}>← Voltar ao Login</Text>
+          </View>
+
+          <View style={styles.infoBox}>
+             <Text style={styles.infoTitle}>ⓘ Informação Importante</Text>
+             <Text style={styles.infoText}>
+               Por motivos de segurança, o código de recuperação expira em 15 minutos.
+             </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+  safeArea: { flex: 1, backgroundColor: '#FDF2C1' },
+  container: { paddingBottom: 40 },
+  header: { padding: 20, paddingTop: 40 },
+  backText: { fontSize: 18, color: '#333', fontWeight: '500' },
+  content: { paddingHorizontal: 25, alignItems: 'center' },
+  logoBox: { backgroundColor: '#1C1C1E', padding: 10, borderRadius: 12, alignItems: 'center', marginBottom: 20, width: 70, height: 70, justifyContent: 'center' },
+  logoIcon: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  logoText: { color: '#34C759', fontSize: 9, fontWeight: 'bold', marginTop: 2 },
+  mainTitle: { fontSize: 26, fontWeight: 'bold', color: '#1C1C1E', marginBottom: 10, textAlign: 'center' },
+  description: { textAlign: 'center', color: '#333', marginBottom: 30, lineHeight: 22, fontSize: 16 },
+  card: { backgroundColor: '#FFFEF5', padding: 20, borderRadius: 15, width: '100%', elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+  label: { fontSize: 12, color: '#777', marginBottom: 8, fontWeight: '600' },
+  inputRow: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#D1D1D6', borderRadius: 10, paddingHorizontal: 12, backgroundColor: '#FFF' },
+  mailEmoji: { fontSize: 18, marginRight: 10 },
+  input: { flex: 1, height: 50, color: '#333' },
+  btn: { backgroundColor: '#2A8C4A', height: 50, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 15 },
+  btnText: { color: '#FFF', fontWeight: 'bold', fontSize: 16 },
+  backLink: { textAlign: 'center', color: '#333', fontSize: 15 },
+  infoBox: { backgroundColor: '#E9F9EE', padding: 18, borderRadius: 12, marginTop: 30, width: '100%', borderLeftWidth: 4, borderLeftColor: '#2A8C4A' },
+  infoTitle: { color: '#2A8C4A', fontWeight: 'bold', marginBottom: 5, fontSize: 15 },
+  infoText: { color: '#333', fontSize: 13, lineHeight: 18 },
 });
