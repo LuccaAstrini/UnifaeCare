@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import ResetPasswordScreen from './src/screens/resetPasswordScreen';
+import RecuperarSenha from './src/screens/recoverPasswordScreen';
 
 export default function App() {
   
   
   return (
-    ResetPasswordScreen()
+    RecuperarSenha()
   );
 }
 
