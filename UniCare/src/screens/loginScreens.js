@@ -8,7 +8,7 @@ import {
   Image
 } from 'react-native';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailsub, setEmailSub] = useState('');
@@ -62,7 +62,7 @@ export default function LoginScreen() {
           />
         </View>
 
-        <TouchableOpacity style={styles.forgotPassword}>
+        <TouchableOpacity style={styles.forgotPassword} onPress={() => {navigation.navigate('RecoverPasswordView')}}>
           <Text style={styles.forgotPasswordText}>RECUPERAR SENHA</Text>
         </TouchableOpacity>
 
