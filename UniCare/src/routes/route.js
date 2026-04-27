@@ -1,19 +1,19 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import ResetPasswordScreen from './src/screens/resetPasswordScreen';
-import RecuperarSenha from './src/screens/recoverPasswordScreen';
+import RecuperarSenha from '../screens/recoverPasswordScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
-import LoginScreen from './src/screens/loginScreens';
-import HomeScreen from '../src/screens/HomeScreen';
+import LoginScreen from '../screens/loginScreens';
+import ResetPasswordScreen from '../screens/resetPasswordScreen';
+import TabNavigator from '../screens/TabNavigator';
 
 const Stack = createStackNavigator();
 
-export default function App() {
+export default function StackNavigator() {
     return (
         <SafeAreaProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+                <Stack.Navigator initialRouteName="LoginView" screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Tab" component={TabNavigator} options={{ headerShown: false }} />
                     <Stack.Screen name="LoginView" component={LoginScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="RecoverPasswordView" component={RecuperarSenha} options={{ headerShown: false }} />
                     <Stack.Screen name="ResetPasswordView" component={ResetPasswordScreen} options={{ headerShown: false }} />
