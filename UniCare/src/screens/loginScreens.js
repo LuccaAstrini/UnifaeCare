@@ -20,13 +20,14 @@ export default function LoginScreen({ navigation }) {
     const verificaremail = emailsub;
     const verificarsenha = passwordsub;
 
-    if (verificaremail && verificarsenha) {
-      Alert.alert("Sucesso", `Bem-vindo, ${nomeEncontrado}!`);
-    } else {
-      Alert.alert("Erro", "E-mail ou Senha não cadastrado.");
-      setEmail("")
-      setPassword("")
-    }
+    //navigation.navigate('Home');
+    // if (verificaremail && verificarsenha) {
+    //   Alert.alert("Sucesso", `Bem-vindo, ${nomeEncontrado}!`);
+    // } else {
+    //   Alert.alert("Erro", "E-mail ou Senha não cadastrado.");
+    //   setEmail("")
+    //   setPassword("")
+    // }
   }
 
 
@@ -66,7 +67,7 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.forgotPasswordText}>RECUPERAR SENHA</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Tab')}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
       </View>

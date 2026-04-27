@@ -7,6 +7,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './src/screens/loginScreens';
 
+import StackNavigator from './src/routes/Route';
+
 export default function App() {
   return (
     StackNavigator()
