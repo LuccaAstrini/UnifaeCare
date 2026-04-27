@@ -8,7 +8,7 @@ import HomeScreen from '../src/screens/HomeScreen';
 
 const Stack = createStackNavigator();
 
-export default function App() {
+export default function StackNavigator() {
     return (
         <SafeAreaProvider>
             <NavigationContainer>
