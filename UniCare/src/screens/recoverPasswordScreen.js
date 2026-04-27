@@ -10,7 +10,7 @@ import {
   Alert
 } from 'react-native';
 
-export default function RecuperarSenha() {
+export default function RecuperarSenha({ navigation }) {
   const [email, setEmail] = useState('');
 
   return (
@@ -23,7 +23,7 @@ export default function RecuperarSenha() {
         <View style={styles.content}>
           <View style={styles.logoBox}>
             <View style={styles.logoIcon}>
-               <Text style={{color: '#fff', fontSize: 20}}>U</Text>
+              <Text style={{ color: '#fff', fontSize: 20 }}>U</Text>
             </View>
             <Text style={styles.logoText}>unifae care</Text>
           </View>
@@ -48,9 +48,9 @@ export default function RecuperarSenha() {
               />
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.btn}
-              onPress={() => Alert.alert('Sucesso', 'Código enviado para: ' + email)}
+              onPress={() => {navigation.navigate('ResetPasswordView')}}
             >
               <Text style={styles.btnText}>Enviar Código de Recuperação</Text>
             </TouchableOpacity>
@@ -59,10 +59,10 @@ export default function RecuperarSenha() {
           </View>
 
           <View style={styles.infoBox}>
-             <Text style={styles.infoTitle}>ⓘ Informação Importante</Text>
-             <Text style={styles.infoText}>
-               Por motivos de segurança, o código de recuperação expira em 15 minutos.
-             </Text>
+            <Text style={styles.infoTitle}>ⓘ Informação Importante</Text>
+            <Text style={styles.infoText}>
+              Por motivos de segurança, o código de recuperação expira em 15 minutos.
+            </Text>
           </View>
         </View>
       </ScrollView>
