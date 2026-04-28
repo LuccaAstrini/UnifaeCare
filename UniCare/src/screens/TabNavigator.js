@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Tab, Navigator } from 'react-native';
 import HomeScreen from './HomeScreen';
+import profile from './profile';
 
 
 
@@ -21,7 +22,7 @@ export default function TabNavigator({ navigation }) {
             <Tab.Screen name="Progresso" component={HomeScreen} options={{
                 headerShown: false,
             }} />
-            <Tab.Screen name="Perfil" component={HomeScreen} options={{
+            <Tab.Screen name="Perfil" component={profile} options={{
                 headerShown: false,
             }} />
         </Tab.Navigator>
