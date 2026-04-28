@@ -1,6 +1,12 @@
 import { useState, useCallback } from "react";
 import { TouchableOpacity, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GRAY_1, GREEN_1, GREEN_4, GREEN_5 } from "../styles/Colors";
+import CustomText from "../../components/CustomText";
+import AlertBanner from "../../components/AlertBanner";
+import Card from "../../components/Card";
+import CustomInput from "../../components/CustomTextInput";
+import PositiveButton from "../../components/PositiveButton";
 
 const INITIAL_FORM_STATE = {
   email: "",
@@ -9,7 +15,7 @@ const INITIAL_FORM_STATE = {
   confirmPassword: "",
 };
 
-export default function ResetPasswordScreen() {
+export default function ResetPasswordScreen({ navigation }) {
   const [form, setForm] = useState(INITIAL_FORM_STATE);
 
   const handleChange = useCallback((field) => (value) => {
@@ -22,55 +28,71 @@ export default function ResetPasswordScreen() {
   }, [form]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Recuperação de Acesso</Text>
-      <Text style={styles.subtitle}>
-        Redefina sua senha para continuar acessando seus dados clínicos e
-        acadêmicos com total segurança
-      </Text>
+    <SafeAreaView style={{ flex: 2, backgroundColor: GREEN_4 }}>
+      <CustomText variant="title" style={{ textAlign: 'center', marginTop: 60, color: GREEN_1, fontSize: 34 }}>
+        Alterar senha
+      </CustomText>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          placeholder="Digite seu email"
-          inputMode="email"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={form.email}
-          onChangeText={handleChange("email")}
-          style={styles.input}
-        />
+      <CustomText variant="bodyMedium" style={{ marginBottom: 15, textAlign: 'center', marginTop: 30, color: GRAY_1, fontWeight: 'bold' }}>
+        Redefina sua senha para continuar acessando seus dados clínicos e acadêmicos com total sergurança.
+      </CustomText>
 
-        <Text style={styles.label}>Código de verificação</Text>
-        <TextInput
-          placeholder="0 0 0 0 - 0 0 0 0"
-          inputMode="numeric"
-          value={form.verificationCode}
-          onChangeText={handleChange("verificationCode")}
-          style={styles.input}
-        />
+      <AlertBanner title="Dica de segurança" message='Utilize uma senha com no mínimo 8 caracteres, incluindo letras maiúsculas, números e um símbolo especial.' />
 
-        <Text style={styles.label}>Nova senha</Text>
-        <TextInput
-          placeholder="* * * * *"
-          secureTextEntry
-          value={form.newPassword}
-          onChangeText={handleChange("newPassword")}
-          style={styles.input}
-        />
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Card>
+          <CustomText variant="caption" style={{ marginBottom: 5 }}>
+            E-mail
+          </CustomText>
 
-        <Text style={styles.label}>Confirmar senha</Text>
-        <TextInput
-          placeholder="* * * * *"
-          secureTextEntry
-          value={form.confirmPassword}
-          onChangeText={handleChange("confirmPassword")}
-          style={styles.input}
-        />
+          <CustomInput
+            value={form.email}
+            onChangeText={handleChange("email")}
+            placeholder="Digite seu e-mail"
+            secureTextEntry={false}
+          />
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Atualizar senha</Text>
-        </TouchableOpacity>
+          <CustomText variant="caption" style={{ marginBottom: 5 }}>
+            Código de verificação
+          </CustomText>
+
+          <CustomInput
+            value={form.verificationCode}
+            onChangeText={handleChange("verificationCode")}
+            placeholder="Digite seu código de verificação"
+            secureTextEntry={false}
+          />
+
+          <CustomText variant="caption" style={{ marginBottom: 5 }}>
+            Nova senha
+          </CustomText>
+
+          <CustomInput
+            value={form.newPassword}
+            onChangeText={handleChange("newPassword")}
+            placeholder="Digite sua nova senha"
+            secureTextEntry={true}
+          />
+
+          <CustomText variant="caption" style={{ marginBottom: 5 }}>
+            Confirmar nova senha
+          </CustomText>
+
+          <CustomInput
+            value={form.confirmPassword}
+            onChangeText={handleChange("confirmPassword")}
+            placeholder="Confirme sua nova senha"
+            secureTextEntry={true}
+          />
+
+          <PositiveButton title="Atualizar senha" onPress={() => {
+            navigation.navigate('LoginView');
+          }} />
+
+          <CustomText variant="bodyMedium" style={{ marginBottom: 5, textAlign: 'center', margin: 40, color: GREEN_5, fontWeight: 'bold' }} onPress={() => navigation.goBack()}>
+            Voltar ao Login
+          </CustomText>
+        </Card>
       </View>
     </SafeAreaView>
   );

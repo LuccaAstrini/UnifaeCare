@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  Image
+  Image,
+  View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomText from '../../components/CustomText';
+import { GRAY_1, GREEN_1, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
+import Card from '../../components/Card';
+import CustomInput from '../../components/CustomTextInput';
+import PositiveButton from '../../components/PositiveButton';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -30,175 +36,76 @@ export default function LoginScreen({ navigation }) {
     // }
   }
 
-
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image source={{ uri: 'https://static.vecteezy.com/system/resources/thumbnails/027/374/615/small/digital-health-logo-png.png' }}
-          style={styles.logo}></Image>
-        <Text style={styles.title}>Bem-vindo ao UNIFAE Care</Text>
-        <Text style={styles.subtitle}>Entre com suas credenciais para continuar.</Text>
-      </View>
+    <SafeAreaView style={{ flex: 2, backgroundColor: GREEN_4 }}>
+      <CustomText variant="title" style={{ textAlign: 'center', marginTop: 60, color: GREEN_1, fontSize: 34 }}>
+        Bem-vindo ao UNIFAE Care
+      </CustomText>
 
-      <View style={styles.form}>
-        <Text style={styles.label}>E-mail</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="nome@exemplo.com.br"
+      <View style={{ flex: 1, justifyContent: 'center', marginBottom: 150 }}>
+        <Card>
+          <CustomText variant="caption" style={{ marginBottom: 5 }}>
+            E-mail
+          </CustomText>
+
+          <CustomInput
             value={email}
             onChangeText={setEmail}
-            keyboardType="email-address"
+            placeholder="Digite sua senha"
+            secureTextEntry={false}
           />
-        </View>
 
-        <Text style={styles.label}>Senha</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="........"
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: 10
+            }}
+          >
+            <CustomText variant="caption" style={{ marginBottom: 5 }}>
+              Senha
+            </CustomText>
+
+            <CustomText variant="caption" style={{ fontWeight: 'bold', marginBottom: 5, color: GREEN_3 }} onPress={() => { navigation.navigate('RecoverPasswordView') }}>
+              Recuperar senha
+            </CustomText>
+          </View>
+
+          <CustomInput
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            placeholder="Digite sua senha"
+            secureTextEntry={true}
           />
-        </View>
 
-        <TouchableOpacity style={styles.forgotPassword} onPress={() => {navigation.navigate('RecoverPasswordView')}}>
-          <Text style={styles.forgotPasswordText}>RECUPERAR SENHA</Text>
-        </TouchableOpacity>
+          <PositiveButton onPress={() => { navigation.navigate('Tab') }} title='Entrar' />
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Tab')}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
+          <View style={{
+            alignItems: 'center',
+            borderBottomWidth: 3,
+            marginTop: 40,
+            borderBottomColor: GRAY_1,
+            borderRadius: 10,
+          }}>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 25,
+              justifyContent: 'center'
+            }}
+          >
+            <CustomText variant="label" style={{ marginHorizontal: 5, color: GRAY_1 }} onPress={() => { navigation.navigate('RecoverPasswordView') }}>
+              Novo por aqui?
+            </CustomText>
+
+            <CustomText variant="label" style={{ color: GREEN_5 }} onPress={() => { }}>
+              Registre-se
+            </CustomText>
+          </View>
+        </Card>
       </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Não possui uma conta?</Text>
-        <TouchableOpacity>
-          <Text style={styles.signUpText}>Cadastre-se agora</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.legal}>
-        <Text style={styles.legalText}>© 2024 UNIFAE CARE. CLINICAL EDITORIAL SYSTEM.</Text>
-        <View style={styles.legalLinks}>
-          <Text style={styles.legalLinkText}>PRIVACIDADE</Text>
-          <Text style={styles.legalLinkText}>TERMOS</Text>
-          <Text style={styles.legalLinkText}>ACESSIBILIDADE</Text>
-        </View>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 40,
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1B4332',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-  },
-  content: {
-    flex: 1,
-    paddingLeft: 300,
-    paddingRight: 300,
-  },
-  form: {
-    width: '100%',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-    marginTop: 15,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F0F2F5',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    height: 55,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginTop: 15,
-  },
-  logo: {
-    width: 150,
-    height: 150,
-    marginTop: 30,
-  },
-  forgotPasswordText: {
-    color: '#2D6A4F',
-    fontWeight: 'bold',
-    fontSize: 13,
-  },
-  button: {
-    backgroundColor: '#2D6A4F',
-    flexDirection: 'row',
-    height: 55,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  footer: {
-    marginTop: 40,
-    alignItems: 'center',
-  },
-  footerText: {
-    color: '#666',
-    fontSize: 15,
-  },
-  signUpText: {
-    color: '#1B4332',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 5,
-  },
-  legal: {
-    marginTop: 60,
-    alignItems: 'center',
-  },
-  legalText: {
-    fontSize: 10,
-    color: '#999',
-    marginBottom: 10,
-  },
-  legalLinks: {
-    flexDirection: 'row',
-    gap: 15,
-  },
-  legalLinkText: {
-    fontSize: 10,
-    color: '#999',
-    textDecorationLine: 'underline',
-  }
-});
