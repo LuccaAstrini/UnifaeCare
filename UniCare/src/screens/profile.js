@@ -2,7 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TabNavigator from "./TabNavigator";
 import { TouchableOpacity, StyleSheet, Text, TextInput, View, Button } from "react-native";
 
-export default function profile() {
+export default function Profile() {
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.header}>UNIFAE Care</Text>
