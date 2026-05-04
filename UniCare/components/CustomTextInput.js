@@ -1,22 +1,38 @@
 import { TextInput } from "react-native-gesture-handler";
 import { FONT_FAMILY_MEDIUM } from "../src/styles/Fonts";
+import { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export default function CustomInput({ value, onChangeText, placeholder, secureTextEntry }) {
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    const isSecure = secureTextEntry && !isPasswordVisible;
+
     return (
-        <TextInput
-            value={value}
-            onChangeText={onChangeText}
-            placeholder={placeholder}
-            secureTextEntry={secureTextEntry}
-            style={{
-                borderWidth: 1,
-                borderColor: '#ccc',
-                borderRadius: 5,
-                padding: 10,
-                marginBottom: 10,
-                fontSize: 16,
-                fontFamily: FONT_FAMILY_MEDIUM
-            }}
-        />
-    )
+        <View>
+            <TextInput
+                style={{
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                    padding: 10,
+                    marginBottom: 10,
+                    fontSize: 16,
+                    fontFamily: FONT_FAMILY_MEDIUM
+                }}
+                value={value}
+                onChangeText={onChangeText}
+                placeholder={placeholder}
+                secureTextEntry={isSecure}
+            />
+            {secureTextEntry && (
+                <TouchableOpacity
+                    onPress={() => setIsPasswordVisible(prev => !prev)}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                    <Text>show</Text>
+                </TouchableOpacity>
+            )}
+        </View>
+    );
 }

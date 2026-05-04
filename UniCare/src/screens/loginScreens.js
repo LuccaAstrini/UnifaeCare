@@ -39,11 +39,19 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={{ flex: 2, backgroundColor: GREEN_4 }}>
       <CustomText variant="title" style={{ textAlign: 'center', marginTop: 60, color: GREEN_1, fontSize: 34 }}>
-        Bem-vindo ao UNIFAE Care
+        UNIFAE Care
       </CustomText>
 
-      <View style={{ flex: 1, justifyContent: 'center', marginBottom: 150 }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Card>
+          <CustomText variant="bodyLarge" style={{ color: GREEN_1 }}>
+            Bem-vindo.
+          </CustomText>
+
+          <CustomText variant="bodyMedium" style={{ marginBottom: 25 }}>
+            Entre com suas credencias para continuar.
+          </CustomText>
+
           <CustomText variant="caption" style={{ marginBottom: 5 }}>
             E-mail
           </CustomText>
