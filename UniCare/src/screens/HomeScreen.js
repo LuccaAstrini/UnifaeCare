@@ -8,6 +8,7 @@ import PositiveButton from "../../components/PositiveButton";
 import CircularIndicator from "../../components/CircularIndicator";
 
 export default function HomeScreen() {
+  
   const progressValue = 89;
   const progressText = progressValue < 25 ? "Você precisa exercitar" : progressValue < 75 ? "Você esta indo bem!" : "Parabens pelo resultado da semana!";
   return (

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ErrorModal from '../../components/ErrorModal';
+import LoadingModal from '../../components/LoadingModal';
 import {
   StyleSheet,
   Text,
@@ -13,27 +15,47 @@ import { GRAY_1, GREEN_1, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
 import Card from '../../components/Card';
 import CustomInput from '../../components/CustomTextInput';
 import PositiveButton from '../../components/PositiveButton';
+import ApiService from '../services/api';
+import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [emailsub, setEmailSub] = useState('');
-  const [passwordsub, setPasswordSub] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  function login() {
-    //Depois que começar a usar o asyncStorage usar o await
-    //Alterar o emailsub e passwordsub para a func que guarda os dados do cadastro
-    const verificaremail = emailsub;
-    const verificarsenha = passwordsub;
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
 
-    //navigation.navigate('Home');
-    // if (verificaremail && verificarsenha) {
-    //   Alert.alert("Sucesso", `Bem-vindo, ${nomeEncontrado}!`);
-    // } else {
-    //   Alert.alert("Erro", "E-mail ou Senha não cadastrado.");
-    //   setEmail("")
-    //   setPassword("")
-    // }
+  async function login() {
+    try {
+      setLoading(true);
+      if (email.trim() === '' || password.trim() === '') {
+        setErrorMessage('Por favor, preencha todos os campos.');
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        setErrorMessage('Por favor, insira um e-mail válido.');
+        return;
+      }
+
+      if (password.length < 6) {
+        setErrorMessage('A senha deve conter pelo menos 6 caracteres.');
+        return;
+      }
+
+      const response = await ApiService.login(email, password);
+      await SecureStore.setItemAsync('api_token', response.access_token);
+      await ApiService.acceptTerms();
+      setLoading(false);
+      navigation.navigate('Tab');
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMessage(error.message);
+    }
   }
 
   return (
@@ -86,7 +108,7 @@ export default function LoginScreen({ navigation }) {
             secureTextEntry={true}
           />
 
-          <PositiveButton onPress={() => { navigation.navigate('Tab') }} title='Entrar' />
+          <PositiveButton onPress={() => { login() }} title='Entrar' enabled={!loading} />
 
           <View style={{
             alignItems: 'center',
@@ -114,6 +136,15 @@ export default function LoginScreen({ navigation }) {
           </View>
         </Card>
       </View>
+      <LoadingModal visible={loading} message='Verificando credenciais' />
+      <ErrorModal
+        visible={!!errorMessage}
+        message={errorMessage}
+        onClose={() => {
+          setLoading(false);
+          setErrorMessage('');
+        }}
+      />
     </SafeAreaView>
   );
 }
