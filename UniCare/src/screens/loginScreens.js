@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomText from '../../components/CustomText';
-import { GRAY_1, GREEN_1, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
 import Card from '../../components/Card';
+import CustomText from '../../components/CustomText';
 import CustomInput from '../../components/CustomTextInput';
 import PositiveButton from '../../components/PositiveButton';
+import { GRAY_1, GREEN_1, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
