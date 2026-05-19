@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, ActivityIndicator, StyleSheet } from 'react-native';
-import CustomText from './CustomText';
-import { GREEN_1, GREEN_2 } from '../src/styles/Colors';
+import CustomText from '../CustomText';
+import { GREEN_1, GREEN_2 } from '../../src/styles/Colors';
 
 export default function LoadingModal({ visible, message = 'Aguarde...' }) {
     return (

@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import { GRAY_1, GREEN_1, GREEN_2, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
 import CustomText from '../../components/CustomText';
-import Card from '../../components/Card';
+import Card from '../../components/cards/Card';
 import CustomInput from '../../components/CustomTextInput';
-import PositiveButton from '../../components/PositiveButton';
+import PositiveButton from '../../components/buttons/PositiveButton';
 import AlertBanner from '../../components/AlertBanner';
 
 export default function RecuperarSenha({ navigation }) {

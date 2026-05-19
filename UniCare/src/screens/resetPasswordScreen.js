@@ -4,9 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { GRAY_1, GREEN_1, GREEN_4, GREEN_5 } from "../styles/Colors";
 import CustomText from "../../components/CustomText";
 import AlertBanner from "../../components/AlertBanner";
-import Card from "../../components/Card";
+import Card from "../../components/cards/Card";
 import CustomInput from "../../components/CustomTextInput";
-import PositiveButton from "../../components/PositiveButton";
+import PositiveButton from "../../components/buttons/PositiveButton";
 
 const INITIAL_FORM_STATE = {
   email: "",

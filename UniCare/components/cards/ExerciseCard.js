@@ -1,8 +1,8 @@
 import { View } from "react-native"
-import Card from "../../components/Card";
+import Card from "./Card";
 import CustomText from "../../components/CustomText";
 import { GRAY_1, GREEN_1, GREEN_2, GREEN_3, GREEN_4 } from "../../src/styles/Colors";
-import PositiveButton from "../PositiveButton";
+import PositiveButton from "../buttons/PositiveButton";
 
 export default function ExerciseCard({ exercise }) {
     return (

@@ -4,10 +4,11 @@ import { TouchableOpacity, StyleSheet, Text, TextInput, View, Button } from "rea
 import CustomText from "../../components/CustomText";
 import ApiService from "../services/api";
 import { useEffect, useState } from "react";
-import Card from "../../components/Card";
+import Card from "../../components/cards/Card";
 import { GREEN_3, GREEN_4 } from "../styles/Colors";
-import PositiveButton from "../../components/PositiveButton";
-import LoadingModal from "../../components/LoadingModal";
+import PositiveButton from "../../components/buttons/PositiveButton";
+import LoadingModal from "../../components/modals/LoadingModal";
+import ErrorModal from "../../components/modals/ErrorModal";
 
 function InfoCard({ label, value }) {
     return (
@@ -27,6 +28,7 @@ export default function Profile({ navigation }) {
     const [userInfo, setUserInfo] = useState(null);
     const [studentInfo, setStudentInfo] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     async function loadUserInfo() {
         try {
@@ -39,6 +41,7 @@ export default function Profile({ navigation }) {
             setStudentInfo(studentData);
         } catch (error) {
             console.error('Error fetching user info:', error);
+            setError('Erro ao carregar informações do usuário');
         } finally {
             setLoading(false);
         }
@@ -53,9 +56,10 @@ export default function Profile({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <LoadingModal visible={loading} message="Consultando suas informações..." />
+            <ErrorModal visible={error !== ''} message={error} onClose={() => setError('')} />
 
             <CustomText>
-                {userInfo ? `${userInfo.name}` : 'Carregando informações...'}
+                {userInfo !== null ? userInfo.name : ''}
             </CustomText>
 
             <Card style={{ width: '90%' }}>
@@ -63,7 +67,7 @@ export default function Profile({ navigation }) {
                     Informações do usuário
                 </CustomText>
 
-                {userInfo ? (
+                {userInfo !== null ? (
                     <>
                         <InfoCard label="Email" value={userInfo.email} />
                         <InfoCard label="Celular" value={userInfo.phone} />
@@ -76,7 +80,7 @@ export default function Profile({ navigation }) {
                     Responsáveis
                 </CustomText>
 
-                {studentInfo ? (
+                {studentInfo !== null ? (
                     <>
                         <InfoCard value={studentInfo.name} />
                     </>

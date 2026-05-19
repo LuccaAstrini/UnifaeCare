@@ -2,9 +2,9 @@ import React from "react";
 import { View, Image, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
-import Card from "../../components/Card";
+import Card from "../../components/cards/Card";
 import CustomText from "../../components/CustomText";
-import PositiveButton from "../../components/PositiveButton";
+import PositiveButton from "../../components/buttons/PositiveButton";
 import { GRAY_1, GREEN_1, GREEN_2 } from "../styles/Colors";
 
 export default function ExerciseScreen({ navigation }) {

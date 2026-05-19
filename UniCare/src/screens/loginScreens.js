@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ErrorModal from '../../components/ErrorModal';
-import LoadingModal from '../../components/LoadingModal';
+import ErrorModal from '../../components/modals/ErrorModal';
+import LoadingModal from '../../components/modals/LoadingModal';
 import {
   StyleSheet,
   Text,
@@ -12,9 +12,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomText from '../../components/CustomText';
 import { GRAY_1, GREEN_1, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
-import Card from '../../components/Card';
+import Card from '../../components/cards/Card';
 import CustomInput from '../../components/CustomTextInput';
-import PositiveButton from '../../components/PositiveButton';
+import PositiveButton from '../../components/buttons/PositiveButton';
 import ApiService from '../services/api';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, StyleSheet, TouchableOpacity } from 'react-native';
-import CustomText from './CustomText';
-import { GREEN_1, GREEN_2, GRAY_1 } from '../src/styles/Colors';
+import CustomText from '../CustomText';
+import { GREEN_1, GREEN_2, GRAY_1 } from '../../src/styles/Colors';
 
 export default function ErrorModal({ visible, message, onClose }) {
     return (

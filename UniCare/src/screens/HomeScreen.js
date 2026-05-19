@@ -1,15 +1,15 @@
 import { View } from "react-native";
 import TabNavigator from "./TabNavigator";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Card from "../../components/Card";
+import Card from "../../components/cards/Card";
 import CustomText from "../../components/CustomText";
 import { GRAY_1, GREEN_1, GREEN_2, GREEN_3, GREEN_4 } from "../styles/Colors";
-import PositiveButton from "../../components/PositiveButton";
+import PositiveButton from "../../components/buttons/PositiveButton";
 import CircularIndicator from "../../components/CircularIndicator";
 import ApiService from "../services/api";
 import React, { useEffect, useState } from 'react';
-import ErrorModal from '../../components/ErrorModal';
-import LoadingModal from '../../components/LoadingModal';
+import ErrorModal from '../../components/modals/ErrorModal';
+import LoadingModal from '../../components/modals/LoadingModal';
 import ExerciseCard from "../../components/cards/ExerciseCard";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

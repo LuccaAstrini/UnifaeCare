@@ -1,6 +1,6 @@
 import { TouchableOpacity, Text } from "react-native";
-import { GREEN_2, GRAY_1 } from "../src/styles/Colors";
-import CustomText from "./CustomText";
+import { GREEN_2, GRAY_1 } from "../../src/styles/Colors";
+import CustomText from "../CustomText";
 
 export default function PositiveButton({ onPress, title, style = {}, variant = 'bodyLarge', enabled = true }) {
     return (
