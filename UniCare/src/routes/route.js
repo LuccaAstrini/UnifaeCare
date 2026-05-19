@@ -10,7 +10,6 @@ import ExerciseScreen from '../screens/exerciseScreen';
 const Stack = createStackNavigator();
 
 export default function StackNavigator() {
-    
     return (
         <SafeAreaProvider>
             <NavigationContainer>

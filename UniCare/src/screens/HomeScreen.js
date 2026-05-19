@@ -6,58 +6,58 @@ import CustomText from "../../components/CustomText";
 import { GRAY_1, GREEN_1, GREEN_2, GREEN_3, GREEN_4 } from "../styles/Colors";
 import PositiveButton from "../../components/PositiveButton";
 import CircularIndicator from "../../components/CircularIndicator";
+import ApiService from "../services/api";
+import React, { useEffect, useState } from 'react';
+import ErrorModal from '../../components/ErrorModal';
+import LoadingModal from '../../components/LoadingModal';
+import ExerciseCard from "../../components/cards/ExerciseCard";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
-  
-  const progressValue = 89;
+  const [userName, setUserName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [progressValue, setProgressValue] = useState(0);
+  const [exercise, setExercise] = useState(null);
   const progressText = progressValue < 25 ? "Você precisa exercitar" : progressValue < 75 ? "Você esta indo bem!" : "Parabens pelo resultado da semana!";
+
+  async function getHomeInfo() {
+    try {
+      setLoading(true);
+      setUserName(await AsyncStorage.getItem('user_name') || 'Usuário');
+      const { motivation, nextExercise, painToday, plan } = await ApiService.getHomeInfo();
+      setProgressValue(plan.percentCompleted);
+      const exerciseData = {
+        name: nextExercise.exerciseName,
+        region1: nextExercise.axis,
+        objective: nextExercise.objective,
+        exercisesCount: plan.totalExercises,
+        onPress: () => {}
+      }
+      setExercise(exerciseData);
+    } catch (error) {
+      console.error('Error fetching home info:', error);
+      setErrorMessage('Erro ao carregar informações da home');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (exercise === null) {
+      getHomeInfo();
+    }
+  }, [exercise]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 10, alignItems: 'flex-start' }}>
+      <LoadingModal visible={loading} message="Buscando seus exercícios..." />
       <CustomText variant="title" style={{ marginBottom: 16 }}>
-        Olá, seja bem-vindo!
+        Olá, {userName}!
       </CustomText>
       <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
-        <Card style={{ width: '90%' }}>
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-            <CustomText variant="bodyMedium" style={{ fontWeight: 'bold' }}>
-              Exercicíos de hoje
-            </CustomText>
 
-            <CustomText variant="bodyMedium" style={{ color: GREEN_2 }}>
-              4
-            </CustomText>
-          </View>
-
-          <Card style={{ marginTop: 10, width: '100%', marginHorizontal: 0, backgroundColor: '#dbdbdb' }}>
-            <CustomText variant="bodyLarge">
-              Nome do exercicío
-            </CustomText>
-
-            <View style={{
-              flexDirection: 'row',
-            }}>
-              <CustomText variant="captionBold" style={{ paddingRight: 10 }}>
-                Região 1
-              </CustomText>
-
-              <CustomText variant="captionBold">
-                Região 2
-              </CustomText>
-            </View>
-            <View style={{
-              flexDirection: 'row',
-            }}>
-              <CustomText variant="captionBold" style={{ color: GREEN_1 }}>
-                12 min
-              </CustomText>
-            </View>
-
-            <PositiveButton title="Iniciar exercício" onPress={() => { }} variant='label' />
-          </Card>
-        </Card>
+        {exercise !== null && <ExerciseCard exercise={exercise} />}
 
         <Card style={{ width: '90%' }}>
           <CustomText variant="bodyMedium" style={{ fontWeight: 'bold' }}>
@@ -72,13 +72,18 @@ export default function HomeScreen() {
               <CustomText variant="bodyMedium" style={{ marginBottom: 5 }}>
                 {progressText}
               </CustomText>
-              <CustomText variant="label" style={{ color: '#666' }}>
-                Progresso
-              </CustomText>
             </View>
           </View>
         </Card>
       </View>
+      <ErrorModal
+        visible={!!errorMessage}
+        message={errorMessage}
+        onClose={() => {
+          setLoading(false);
+          setErrorMessage('');
+        }}
+      />
     </SafeAreaView>
   );
 }

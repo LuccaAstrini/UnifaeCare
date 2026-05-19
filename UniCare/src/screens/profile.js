@@ -1,151 +1,108 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import TabNavigator from "./TabNavigator";
 import { TouchableOpacity, StyleSheet, Text, TextInput, View, Button } from "react-native";
+import CustomText from "../../components/CustomText";
+import ApiService from "../services/api";
+import { useEffect, useState } from "react";
+import Card from "../../components/Card";
+import { GREEN_3, GREEN_4 } from "../styles/Colors";
+import PositiveButton from "../../components/PositiveButton";
+import LoadingModal from "../../components/LoadingModal";
 
-export default function Profile() {
+function InfoCard({ label, value }) {
+    return (
+        <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 10
+        }}>
+            {label && <CustomText variant="bodyMedium" style={{ color: GREEN_3 }}>{label}</CustomText>}
+            <CustomText variant="bodyMedium" style={{ color: GREEN_3 }}>{value}</CustomText>
+            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 1, backgroundColor: GREEN_4 }} />
+        </View>
+    )
+}
+
+export default function Profile({ navigation }) {
+    const [userInfo, setUserInfo] = useState(null);
+    const [studentInfo, setStudentInfo] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    async function loadUserInfo() {
+        try {
+            setLoading(true);
+            const tempData = await ApiService.getUserInfo();
+            const userData = tempData.profile
+            const studentData = tempData.responsibleStudent
+            console.log('User data:', tempData);
+            setUserInfo(userData);
+            setStudentInfo(studentData);
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (userInfo === null) {
+            loadUserInfo();
+        }
+    }, [userInfo]);
+
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.header}>UNIFAE Care</Text>
-            <Text style={styles.nome}>Cristiane Imamura</Text>
-            <Text style={styles.IDinfo}>ID: #8829-REHAB</Text>
+            <LoadingModal visible={loading} message="Consultando suas informações..." />
 
-            <View>
-                <Text style={styles.titlefisio}>Fisioterapeuta responsável</Text>
-                <Text style={styles.doutoras}>Dr. Sarah Chen</Text>
-                <Text style={styles.especialidades}>Especialista Ortopédica</Text>
+            <CustomText>
+                {userInfo ? `${userInfo.name}` : 'Carregando informações...'}
+            </CustomText>
+
+            <Card style={{ width: '90%' }}>
+                <CustomText variant="bodyLarge" style={{ fontWeight: 'bold', fontSize: 18 }}>
+                    Informações do usuário
+                </CustomText>
+
+                {userInfo ? (
+                    <>
+                        <InfoCard label="Email" value={userInfo.email} />
+                        <InfoCard label="Celular" value={userInfo.phone} />
+                    </>
+                ) : (<></>)}
+            </Card>
+
+            <Card style={{ width: '90%' }}>
+                <CustomText variant="bodyLarge" style={{ fontWeight: 'bold', fontSize: 18 }}>
+                    Responsáveis
+                </CustomText>
+
+                {studentInfo ? (
+                    <>
+                        <InfoCard value={studentInfo.name} />
+                    </>
+                ) : (
+                    <CustomText variant="bodyMedium"></CustomText>
+                )}
+            </Card>
+
+            <View style={{ width: '90%' }}>
+                <PositiveButton style={{ backgroundColor: 'rgb(255, 32, 32)' }} title="Sair" onPress={async () => {
+                    navigation.navigate('LoginView');
+                }} />
             </View>
+        </SafeAreaView >
 
-            <View>
-                <Text style={styles.titlefisio}>Fisioterapeuta responsável</Text>
-                <Text style={styles.doutoras}>Dr. Vanessa</Text>
-                <Text style={styles.especialidades}>Especialista Ortopédica</Text>
-            </View>
-
-        <View>
-            <View style={styles.divmeta}>
-                <Text style={styles.meta}>Meta semanal</Text>
-                <Text style={styles.porcentagem}>85% <Text style={styles.concluido}>concluído</Text></Text>
-            </View>
-        </View>        
-
-        <View style={styles.viewconfig}>    
-            <Text style={styles.configsup}>Configurações e suporte</Text>
-                <View style={styles.lembretes}>
-                    <Text style={styles.notificacoes}>Lembretes</Text>
-                    <Text style={styles.notificacoes}>Notificações</Text>
-                    <Text style={styles.notificacoes}>Privacidade e Dados</Text>
-                </View>
-        </View>
-
-        <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sair</Text>
-        </TouchableOpacity> 
-
-        </SafeAreaView>      
-        
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         paddingTop: 20,
-        alignItems:"center",
-        justifyContent:"center",
+        alignItems: "center",
+        justifyContent: "center",
+        flex: 1
     },
-
-    header:{
-        fontWeight:"bold",
-        fontSize: 20
-    },
-
-    nome:{
-        fontSize: 40,
-        paddingTop: 20,
-    },
-
-    IDinfo:{
-        color: '#227700',
-        fontSize: 15,
-        paddingBottom: 20,
-    },
-
-    titlefisio:{
-        color: '#6d6565',
-        paddingBottom: 5,
-        paddingTop: 10,
-        fontSize: 20,
-    }, 
-
-    doutoras:{
-       fontWeight:"bold",
-       fontSize: 25,
-    },
-
-    especialidades:{
-        color: '#6d6565',
-        paddingBottom: 5,
-        fontSize: 20,
-    },
-
-    divmeta:{
-         color: '#070101',
-         
-    },
-
-    meta:{
-        color: '#017b0f',
-        fontSize: 15,
-        paddingTop: 30,
-        paddingBottom: 10,
-        fontWeight:"bold",
-    },
-
-    porcentagem:{
-        fontWeight: 'bold',
-        color: '#017b0f',
-        fontSize: 45,
-        fontWeight:"bold",
-    },
-    concluido:{
-        fontSize: 20,
-        fontWeight:"bold",
-    },
-
-    viewconfig:{
-        
-    },
-
-    configsup:{
-        color: '#6d6565',
-        paddingTop: 10,
-        paddingBottom:20
-    },
-
-    notificacoes:{
-        fontSize: 20,
-    },
-    
-    lembretes:{
-        gap: 18
-    },
-
-    button: {
-        backgroundColor: '#f7cac6',
-        flexDirection: 'row',
-        height: 55,
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 30,
-        width: 270
-    },    
-
-    buttonText:{
-        color: "#ff0000",
-        fontWeight: "bold",
-        textAlign: "center",
-    },
-}) ;
+});
 
 
 

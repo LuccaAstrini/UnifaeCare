@@ -31,7 +31,9 @@ const ApiService = {
     login: (email, password) =>
         http.post('/auth/login', { email, password, accessMode: 'APP', appId: 1 }),
     acceptTerms: () =>
-        http.post('/auth/consent/accept', {consentTermId: 2})
+        http.post('/auth/consent/accept', { consentTermId: 2 }),
+    getHomeInfo: () => http.get('/app/home'),
+    getUserInfo: () => http.get('/app/home/profile'),
 };
 
 export default ApiService;

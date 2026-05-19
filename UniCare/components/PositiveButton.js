@@ -2,7 +2,7 @@ import { TouchableOpacity, Text } from "react-native";
 import { GREEN_2, GRAY_1 } from "../src/styles/Colors";
 import CustomText from "./CustomText";
 
-export default function PositiveButton({ onPress, title, variant = 'bodyLarge', enabled = true }) {
+export default function PositiveButton({ onPress, title, style = {}, variant = 'bodyLarge', enabled = true }) {
     return (
         <TouchableOpacity
             style={{
@@ -10,6 +10,7 @@ export default function PositiveButton({ onPress, title, variant = 'bodyLarge', 
                 backgroundColor: enabled ? GREEN_2 : GRAY_1,
                 padding: 5,
                 borderRadius: 10,
+                ...style
             }}
             onPress={onPress}
             disabled={!enabled}
