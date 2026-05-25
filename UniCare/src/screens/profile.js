@@ -1,5 +1,4 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import TabNavigator from "./TabNavigator";
 import { TouchableOpacity, StyleSheet, Text, TextInput, View, Button } from "react-native";
 import CustomText from "../../components/CustomText";
 import ApiService from "../services/api";
@@ -54,7 +53,7 @@ export default function Profile({ navigation }) {
     }, [userInfo]);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
             <LoadingModal visible={loading} message="Consultando suas informações..." />
             <ErrorModal visible={error !== ''} message={error} onClose={() => setError('')} />
 

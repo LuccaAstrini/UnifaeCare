@@ -1,5 +1,5 @@
-import { View } from "react-native";
-import TabNavigator from "./TabNavigator";
+import { View, BackHandler } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Card from "../../components/cards/Card";
 import CustomText from "../../components/CustomText";
@@ -13,13 +13,25 @@ import LoadingModal from '../../components/modals/LoadingModal';
 import ExerciseCard from "../../components/cards/ExerciseCard";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [userName, setUserName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [progressValue, setProgressValue] = useState(0);
   const [exercise, setExercise] = useState(null);
   const progressText = progressValue < 25 ? "Você precisa exercitar" : progressValue < 75 ? "Você esta indo bem!" : "Parabens pelo resultado da semana!";
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        console.log('Back button pressed - HomeScreen');
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [])
+  );
 
   async function getHomeInfo() {
     try {
@@ -32,7 +44,7 @@ export default function HomeScreen() {
         region1: nextExercise.axis,
         objective: nextExercise.objective,
         exercisesCount: plan.totalExercises,
-        onPress: () => {}
+        onPress: () => { navigation.navigate('exercise', { props: nextExercise.prescriptionItemId }) },
       }
       setExercise(exerciseData);
     } catch (error) {
@@ -50,11 +62,8 @@ export default function HomeScreen() {
   }, [exercise]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 10, alignItems: 'flex-start' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 5, alignItems: 'flex-start' }} edges={['bottom', 'left', 'right']}>
       <LoadingModal visible={loading} message="Buscando seus exercícios..." />
-      <CustomText variant="title" style={{ marginBottom: 16 }}>
-        Olá, {userName}!
-      </CustomText>
       <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
 
         {exercise !== null && <ExerciseCard exercise={exercise} />}

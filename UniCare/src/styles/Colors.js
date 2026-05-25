@@ -1,4 +1,6 @@
 
+
+// Cores legado
 export const GREEN_1 = '#1B4332'
 export const GREEN_2 = '#2D6A4F'
 export const GREEN_3 = '#274E3D'

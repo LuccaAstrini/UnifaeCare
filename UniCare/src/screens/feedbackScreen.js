@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Card from '../../components/Card';
+import Card from '../../components/cards/Card';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
-import PositiveButton from '../../components/PositiveButton';
+import PositiveButton from '../../components/buttons/PositiveButton';
 
 
 // --- Dados para os níveis de feedback ---

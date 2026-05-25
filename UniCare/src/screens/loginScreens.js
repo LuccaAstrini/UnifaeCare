@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ErrorModal from '../../components/modals/ErrorModal';
 import LoadingModal from '../../components/modals/LoadingModal';
 import {
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Card from '../../components/Card';
 import CustomText from '../../components/CustomText';
 import { GRAY_1, GREEN_1, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
 import Card from '../../components/cards/Card';
@@ -15,11 +14,17 @@ import ApiService from '../services/api';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, route }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (route.params?.sessionExpiredMessage) {
+      setErrorMessage(route.params.sessionExpiredMessage);
+    }
+  }, [route.params?.sessionExpiredMessage]);
 
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,7 +56,7 @@ export default function LoginScreen({ navigation }) {
       await AsyncStorage.setItem('user_name', name);
       await ApiService.acceptTerms();
       setLoading(false);
-      navigation.navigate('Tab');
+      navigation.reset({ index: 0, routes: [{ name: 'Tab' }] });
     } catch (error) {
       let msg = 'Erro ao realizar login!';
       console.error('Login error:', error);
