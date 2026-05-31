@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, StyleSheet, TouchableOpacity } from 'react-native';
 import CustomText from '../CustomText';
-import { GREEN_1, GREEN_2, GRAY_1 } from '../../src/styles/Colors';
+import { GREEN_1, GREEN_2, GRAY_1, ERROR_BG, ERROR_TEXT } from '../../styles/Colors';
 
 export default function ErrorModal({ visible, message, onClose }) {
     return (
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#FDECEA',
+        backgroundColor: ERROR_BG,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     icon: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: '#C0392B',
+        color: ERROR_TEXT,
     },
     title: {
         color: GREEN_1,

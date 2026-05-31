@@ -6,8 +6,8 @@ import {
     FONT_FAMILY_REGULAR,
     FONT_SIZE_SMALL,
     FONT_SIZE_MEDIUM,
-} from '../src/styles/Typography';
-import { GREEN_1, GREEN_4 } from '../src/styles/Colors';
+} from '../styles/Typography';
+import { GREEN_1, GREEN_4 } from '../styles/Colors';
 import CustomText from './CustomText';
 
 const AlertBanner = ({ title = 'Aviso!', message }) => {
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     accent: {
         position: 'absolute',
         top: 0,
-        left: -4,      // peeks out left
+        left: -4, 
         bottom: 0,
         width: '100%',
         backgroundColor: GREEN_1,

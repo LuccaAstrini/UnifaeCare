@@ -1,11 +1,11 @@
 import { TextInput } from "react-native-gesture-handler";
-import { FONT_FAMILY_MEDIUM } from "../src/styles/Fonts";
+import { FONT_FAMILY_MEDIUM } from "../styles/Fonts";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import { GREEN_3 } from "../src/styles/Colors";
+import { GREEN_3 } from "../styles/Colors";
 
-export default function CustomInput({ value, onChangeText, placeholder, secureTextEntry }) {
+export default function CustomInput({ value, onChangeText, placeholder, secureTextEntry, multiline = false }) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const isSecure = secureTextEntry && !isPasswordVisible;
@@ -26,6 +26,7 @@ export default function CustomInput({ value, onChangeText, placeholder, secureTe
                 onChangeText={onChangeText}
                 placeholder={placeholder}
                 secureTextEntry={isSecure}
+                multiline={multiline}
             />
             {secureTextEntry && (
                 <TouchableOpacity
@@ -36,7 +37,7 @@ export default function CustomInput({ value, onChangeText, placeholder, secureTe
                         name={isPasswordVisible ? "eye-off" : "eye"}
                         size={20}
                         color={GREEN_3}
-                        />
+                    />
                 </TouchableOpacity>
             )}
         </View>

@@ -1,15 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { GREEN_2, GREEN_4, GRAY_1 } from '../styles/Colors';
+import { GREEN_2, GREEN_4, GREEN_5, GRAY_1, GREEN_3, GREEN_1, ORAGEN_1, WHITE } from '../../styles/Colors';
+import { Ionicons } from '@expo/vector-icons';
+import CustomText from '../CustomText';
 
 export default function AppointmentCard({ time, title, category }) {
+    const color = category === 'videocam' ? GREEN_4 : ORAGEN_1;
+    const iconColor = category === 'videocam' ? GREEN_2 : WHITE
     return (
         <View style={styles.card}>
-            <View style={styles.timeBadge}>
-                <Text style={styles.timeText}>{time}</Text>
+            <View style={[styles.timeBadge, { backgroundColor: color }]}>
+                <CustomText variant='label' color={iconColor} style={{ marginRight: 8 }} >{time}</CustomText>
+                <Ionicons size={18} name={category} color={iconColor} />
             </View>
             <View style={styles.info}>
-                <Text style={styles.title}>{title}</Text>
+                <CustomText variant='bodyMedium'>{title}</CustomText>
             </View>
         </View>
     );
@@ -35,8 +40,9 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 10,
         marginRight: 14,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         minWidth: 58,
     },
     timeText: {

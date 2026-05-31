@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import CircularProgress from "react-native-circular-progress-indicator";
-import { GREEN_1 } from "../src/styles/Colors";
+import { GREEN_1 } from "../styles/Colors";
 
 export default function CircularIndicator({ value, style }) {
     return (

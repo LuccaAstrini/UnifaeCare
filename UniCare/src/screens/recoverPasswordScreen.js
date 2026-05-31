@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -10,17 +10,17 @@ import {
   Alert
 } from 'react-native';
 import { GRAY_1, GREEN_1, GREEN_2, GREEN_3, GREEN_4, GREEN_5 } from '../styles/Colors';
-import CustomText from '../../components/CustomText';
-import Card from '../../components/cards/Card';
-import CustomInput from '../../components/CustomTextInput';
-import PositiveButton from '../../components/buttons/PositiveButton';
-import AlertBanner from '../../components/AlertBanner';
+import CustomText from '../components/CustomText';
+import Card from '../components/cards/Card';
+import CustomInput from '../components/CustomTextInput';
+import PositiveButton from '../components/buttons/PositiveButton';
+import AlertBanner from '../components/AlertBanner';
 
 export default function RecuperarSenha({ navigation }) {
   const [email, setEmail] = useState('');
 
   return (
-    <SafeAreaView style={{ flex: 2, backgroundColor: GREEN_4 }}>
+    <SafeAreaView style={{ flex: 2, backgroundColor: GREEN_4, alignItems: 'center' }}>
       <CustomText variant="title" style={{ textAlign: 'center', marginTop: 60, color: GREEN_1, fontSize: 34 }}>
         Recuperar senha
       </CustomText>
@@ -29,7 +29,7 @@ export default function RecuperarSenha({ navigation }) {
         Insira seu e-mail para receber um código de 8 dígitos para redefinir sua senha.
       </CustomText>
 
-      <View style={{ flex: 1, justifyContent: 'center', marginBottom: 250 }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 250 }}>
         <Card>
           <CustomText variant="caption" style={{ marginBottom: 5 }}>
             E-mail

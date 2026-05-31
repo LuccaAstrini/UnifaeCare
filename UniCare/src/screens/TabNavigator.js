@@ -1,16 +1,16 @@
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { StyleSheet, Pressable, View, Text } from 'react-native';
 import HomeScreen from './HomeScreen';
 import Profile from './profile';
 import OnlineCalendar from './OnlineCalendar';
-import PresencialCalendar from './PresencialCalendar';
 import { Ionicons } from '@expo/vector-icons';
 import { GRAY_1, GREEN_2, GREEN_3 } from '../styles/Colors';
+import { useAuth } from '../context/AuthContext';
 
 function CustomDrawerContent(props) {
-    const [agendaOpen, setAgendaOpen] = useState(false);
     const currentRoute = props.state.routeNames[props.state.index];
+    const { signOut } = useAuth();
 
     const itemProps = {
         activeTintColor: GREEN_3,
@@ -27,39 +27,14 @@ function CustomDrawerContent(props) {
                 {...itemProps}
             />
 
-            <TouchableOpacity onPress={() => setAgendaOpen(prev => !prev)} style={styles.sectionHeader}>
-                <View style={styles.sectionHeaderLeft}>
-                    <Ionicons name="calendar" size={20} color={GREEN_2} style={styles.sectionIcon} />
-                    <Text style={[styles.sectionLabel, { color: GRAY_1 }]}>Agenda</Text>
-                </View>
-                <Ionicons name={agendaOpen ? 'chevron-up' : 'chevron-down'} size={16} color={GRAY_1} />
-            </TouchableOpacity>
-
-            {agendaOpen && (
-                <View style={styles.subItems}>
-                    <DrawerItem
-                        label="Consultas presenciais"
-                        focused={currentRoute === 'ConsultasPresenciais'}
-                        onPress={() => props.navigation.navigate('ConsultasPresenciais')}
-                        labelStyle={styles.subLabel}
-                        {...itemProps}
-                    />
-                    <DrawerItem
-                        label="Consultas On-line"
-                        focused={currentRoute === 'ConsultasOnline'}
-                        onPress={() => props.navigation.navigate('ConsultasOnline')}
-                        labelStyle={styles.subLabel}
-                        {...itemProps}
-                    />
-                    <DrawerItem
-                        label="Histórico"
-                        focused={currentRoute === 'Historico'}
-                        onPress={() => props.navigation.navigate('Historico')}
-                        labelStyle={styles.subLabel}
-                        {...itemProps}
-                    />
-                </View>
-            )}
+            <DrawerItem
+                label="Consultas"
+                icon={({ size }) => <Ionicons name="calendar" size={size} color={GREEN_2} />}
+                focused={currentRoute === 'ConsultasOnline'}
+                onPress={() => props.navigation.navigate('ConsultasOnline')}
+                labelStyle={styles.subLabel}
+                {...itemProps}
+            />
 
             <DrawerItem
                 label="Progresso"
@@ -75,14 +50,21 @@ function CustomDrawerContent(props) {
                 onPress={() => props.navigation.navigate('Perfil')}
                 {...itemProps}
             />
+            <DrawerItem
+                label="Sair"
+                icon={({ size }) => <Ionicons name="log-out" size={size} color={"black"} />}
+                focused={currentRoute === 'Sair'}
+                onPress={async () => { await signOut(); props.navigation.navigate('LoginView'); }}
+                style={{ marginTop: 20, backgroundColor: 'rgba(255, 0, 0, 0.1)' }}
+                labelStyle={{ color: 'black' }}
+            />
         </DrawerContentScrollView>
     );
 }
 
+const Drawer = createDrawerNavigator();
+
 export default function DrawerNavigator({ navigation }) {
-
-    const Drawer = createDrawerNavigator();
-
     return (
         <Drawer.Navigator
             initialRouteName="Home"
@@ -95,14 +77,17 @@ export default function DrawerNavigator({ navigation }) {
                 headerShadowVisible: false,
                 headerStyle: { backgroundColor: 'transparent', elevation: 0 },
                 headerLeft: () => (
-                    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
+                    <Pressable
+                        onPress={() => navigation.openDrawer()}
+                        style={styles.menuButton}
+                        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                    >
                         <Ionicons name="menu" size={28} color={GREEN_2} />
-                    </TouchableOpacity>
+                    </Pressable>
                 ),
             })}
         >
             <Drawer.Screen name="Home" component={HomeScreen} />
-            <Drawer.Screen name="ConsultasPresenciais" component={PresencialCalendar} />
             <Drawer.Screen name="ConsultasOnline" component={OnlineCalendar} />
             <Drawer.Screen name="Historico" component={HomeScreen} />
             <Drawer.Screen name="Progresso" component={HomeScreen} />

@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Calendar from '../components/Calendar';
-import AppointmentCard from '../components/AppointmentCard';
+import AppointmentCard from '../components/cards/AppointmentCard';
 import AddAppointmentModal from '../components/AddAppointmentModal';
 import { getAppointmentsByDate } from '../services/appointments';
 import { GREEN_2, GREEN_3, GRAY_1 } from '../styles/Colors';
+import Card from '../components/cards/Card';
+import CustomText from '../components/CustomText';
 
 function toDateString(date) {
     if (!date) return null;
@@ -19,7 +21,6 @@ function toDateString(date) {
 export default function OnlineCalendar() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [appointmentsByDate, setAppointmentsByDate] = useState({});
-    const [modalVisible, setModalVisible] = useState(false);
 
     const dateKey = toDateString(selectedDate);
 
@@ -27,19 +28,9 @@ export default function OnlineCalendar() {
         ? (appointmentsByDate[dateKey] ?? getAppointmentsByDate(dateKey))
         : [];
 
-    function handleSave({ time, title }) {
-        const current = appointmentsByDate[dateKey] ?? getAppointmentsByDate(dateKey);
-        const newItem = { id: String(Date.now()), time, title, category: '' };
-        setAppointmentsByDate(prev => ({
-            ...prev,
-            [dateKey]: [...current, newItem].sort((a, b) => a.time.localeCompare(b.time)),
-        }));
-        setModalVisible(false);
-    }
-
     return (
         <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
-            <Text style={styles.title}>Consultas On-line</Text>
+            <Text style={styles.title}>Consultas agendadas</Text>
 
             <Calendar
                 onDayPress={setSelectedDate}
@@ -58,23 +49,18 @@ export default function OnlineCalendar() {
                         data={appointments}
                         keyExtractor={item => item.id}
                         renderItem={({ item }) => (
-                            <AppointmentCard time={item.time} title={item.title} />
+                            <AppointmentCard time={item.time} title={item.title} category={item.category} />
                         )}
                         contentContainerStyle={styles.list}
                         showsVerticalScrollIndicator={false}
                     />
-
-                    <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
-                        <Ionicons name="add" size={28} color="#fff" />
-                    </TouchableOpacity>
                 </>
-            ) : null}
+            ) : <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                <Card style={{ width: '100%' }}>
+                    <CustomText variant='bodyMedium' color={GREEN_2}>Nenhuma consulta agendada para esta data.</CustomText>
+                </Card>
+            </View>}
 
-            <AddAppointmentModal
-                visible={modalVisible}
-                onSave={handleSave}
-                onClose={() => setModalVisible(false)}
-            />
         </SafeAreaView>
     );
 }

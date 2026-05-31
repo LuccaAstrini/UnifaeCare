@@ -13,6 +13,7 @@ import { useFonts,
 } from '@expo-google-fonts/nunito';
 import StackNavigator from './src/routes/Route';
 import { useEffect } from 'react';
+import { AuthProvider } from './src/context/AuthContext';
 import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync(); 
@@ -33,6 +34,8 @@ export default function App() {
   if (!fontsLoaded && !error) return null;
 
   return (
-    StackNavigator()
+    <AuthProvider>
+      {StackNavigator()}
+    </AuthProvider>
   );
 }

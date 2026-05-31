@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text as RNText, StyleSheet } from 'react-native';
-import {typography} from '../src/styles/Typography';
+import {typography} from '../styles/Typography';
 
 const CustomText = ({ variant = 'bodyMedium', color, style, children, ...rest }) => (
   <RNText

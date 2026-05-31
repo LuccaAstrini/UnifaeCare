@@ -1,12 +1,12 @@
-import { useState, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
 import { TouchableOpacity, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GRAY_1, GREEN_1, GREEN_4, GREEN_5 } from "../styles/Colors";
-import CustomText from "../../components/CustomText";
-import AlertBanner from "../../components/AlertBanner";
-import Card from "../../components/cards/Card";
-import CustomInput from "../../components/CustomTextInput";
-import PositiveButton from "../../components/buttons/PositiveButton";
+import CustomText from "../components/CustomText";
+import AlertBanner from "../components/AlertBanner";
+import Card from "../components/cards/Card";
+import CustomInput from "../components/CustomTextInput";
+import PositiveButton from "../components/buttons/PositiveButton";
 
 const INITIAL_FORM_STATE = {
   email: "",
@@ -28,7 +28,7 @@ export default function ResetPasswordScreen({ navigation }) {
   }, [form]);
 
   return (
-    <SafeAreaView style={{ flex: 2, backgroundColor: GREEN_4 }}>
+    <SafeAreaView style={{ flex: 2, backgroundColor: GREEN_4, alignItems: 'center' }}>
       <CustomText variant="title" style={{ textAlign: 'center', marginTop: 60, color: GREEN_1, fontSize: 34 }}>
         Alterar senha
       </CustomText>
@@ -89,7 +89,9 @@ export default function ResetPasswordScreen({ navigation }) {
             navigation.navigate('LoginView');
           }} />
 
-          <CustomText variant="bodyMedium" style={{ marginBottom: 5, textAlign: 'center', margin: 40, color: GREEN_5, fontWeight: 'bold' }} onPress={() => navigation.goBack()}>
+          <CustomText variant="bodyMedium" style={{ marginBottom: 5, textAlign: 'center', margin: 40, color: GREEN_5, fontWeight: 'bold' }} onPress={() => {
+            navigation.reset({ index: 0, routes: [{ name: 'LoginView' }] });
+          }}>
             Voltar ao Login
           </CustomText>
         </Card>
