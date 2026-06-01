@@ -13,7 +13,8 @@ const CustomStepText = ({ step, text }) => {
                 borderRadius: 10,
                 paddingVertical: 10,
                 marginRight: 15,
-            }} backgroundColor={GREEN_2}>
+                backgroundColor: GREEN_2,
+            }}>
                 <CustomText variant='bodyLarge' style={{ fontWeight: 700 }} color={WHITE}>
                     {step}
                 </CustomText>

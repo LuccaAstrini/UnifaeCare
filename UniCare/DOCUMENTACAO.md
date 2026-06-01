@@ -8,7 +8,7 @@
 4. [Navegação](#4-navegação)
 5. [Telas](#5-telas)
 6. [Componentes](#6-componentes)
-7. [Hooks](#7-hooks)
+7. [Hooks](#7-hooks) (useRequest + 6 hooks ViewModel)
 8. [Contextos](#8-contextos)
 9. [Constantes](#9-constantes)
 10. [Serviços](#10-serviços)
@@ -70,6 +70,14 @@ npm install
 
 ## 3. Arquitetura
 
+O projeto segue o padrão **MVVM + Hooks**: cada tela possui um hook ViewModel dedicado (`useXxx`) que contém toda a lógica de negócio, estado e chamadas à API. O componente de tela é responsável apenas por renderizar JSX usando os valores retornados pelo hook.
+
+| Camada | Equivalente MVVM | No projeto |
+|---|---|---|
+| **Model** | Dados e regras de negócio | `services/` (authService, homeService…) + API REST |
+| **ViewModel** | Lógica e estado por tela | `hooks/useLogin`, `useHome`, `useExercise`, etc. |
+| **View** | Interface | `screens/` + `components/` |
+
 ### Estrutura de pastas
 
 ```
@@ -84,9 +92,16 @@ UniCare/
 │   ├── constants/             # Constantes globais (chaves de storage)
 │   ├── context/               # Contextos React (autenticação)
 │   ├── hooks/                 # Hooks customizados
+│   │   ├── useRequest.js      # Gerenciamento de loading/erro (base)
+│   │   ├── useLogin.js        # ViewModel da tela de Login
+│   │   ├── useHome.js         # ViewModel da Home
+│   │   ├── useExercise.js     # ViewModel da tela de Exercício
+│   │   ├── useFeedback.js     # ViewModel da tela de Feedback
+│   │   ├── useProfile.js      # ViewModel do Perfil
+│   │   └── useOnlineCalendar.js # ViewModel do Calendário
 │   ├── icons/                 # Ícones SVG customizados
 │   ├── routes/                # Configuração de navegação
-│   ├── screens/               # Telas do aplicativo
+│   ├── screens/               # Telas do aplicativo (apenas JSX)
 │   ├── services/              # Comunicação com a API (dividido por domínio)
 │   └── styles/                # Cores, fontes e tipografia
 ├── App.js                     # Ponto de entrada, carregamento de fontes
@@ -96,18 +111,19 @@ UniCare/
 ### Camadas da aplicação
 
 ```
-Telas (screens) + hook useRequest
+View — Telas (screens) — apenas JSX
         ↕
-AuthContext (estado de autenticação global)
+ViewModel — Hooks por tela (useLogin, useHome, useExercise…)
+        ↕  useRequest (loading/erro)  +  AuthContext (autenticação global)
         ↕
-Serviços por domínio (authService, homeService, etc.)
+Model — Serviços por domínio (authService, homeService, etc.)
         ↕
 http.js (instância axios + interceptores)
         ↕
 API REST (http://185.217.125.219:3000/api/v1)
 ```
 
-O estado local de cada tela é gerenciado com hooks do React (`useState`, `useEffect`, `useCallback`, `useFocusEffect`). O estado de loading e erro é centralizado pelo hook `useRequest`. O estado de autenticação é compartilhado via `AuthContext`.
+Todo o estado local (`useState`, `useEffect`, `useCallback`, `useFocusEffect`), as chamadas à API e as validações vivem exclusivamente nos hooks ViewModel. Os componentes de tela recebem os dados e handlers via `const vm = useXxx(navigation, route)` e apenas os utilizam no JSX.
 
 ---
 
@@ -134,14 +150,25 @@ Todos os headers estão ocultos. O container de navegação usa `navigationRef` 
 
 Rota inicial: `Home`
 
-| Item do menu | Componente | Ícone |
+**Screens registradas no Drawer:**
+
+| Nome da rota | Componente |
+|---|---|
+| `Home` | `HomeScreen` |
+| `ConsultasOnline` | `OnlineCalendar` |
+| `Historico` | `HomeScreen` |
+| `Perfil` | `Profile` |
+
+**Itens visíveis no menu lateral (CustomDrawerContent):**
+
+| Item do menu | Navega para | Ícone |
 |---|---|---|
-| Home | `HomeScreen` | home |
-| Consultas | `OnlineCalendar` | calendar |
-| Histórico | `HomeScreen` | — |
-| Progresso | `HomeScreen` | bar-chart |
-| Perfil | `Profile` | person |
+| Home | `Home` | home |
+| Consultas | `ConsultasOnline` | calendar |
+| Perfil | `Perfil` | person |
 | Sair | — | log-out |
+
+> `Historico` está registrado como Drawer.Screen mas não possui DrawerItem no menu — não aparece visualmente para o usuário.
 
 O item **Sair** chama `signOut()` do `AuthContext` (limpa token e AsyncStorage) e então navega para `LoginView`. Possui destaque visual em vermelho.
 
@@ -149,7 +176,7 @@ O item **Sair** chama `signOut()` do `AuthContext` (limpa token e AsyncStorage) 
 
 ## 5. Telas
 
-Todas as telas utilizam o hook `useRequest` para gerenciar estado de loading e erros. Os modais `LoadingModal` e `ErrorModal` são renderizados de forma condicional (`loading ? <LoadingModal> : <ErrorModal>`) para evitar conflitos de modal simultâneo no iOS.
+Todas as telas seguem o padrão MVVM + Hooks: o componente de tela chama `const vm = useXxx(navigation, route)` e usa apenas os valores e funções retornados pelo hook. Os modais `LoadingModal` e `ErrorModal` são renderizados de forma condicional (`vm.loading ? <LoadingModal> : <ErrorModal>`) para evitar conflitos de modal simultâneo no iOS.
 
 ---
 
@@ -157,22 +184,22 @@ Todas as telas utilizam o hook `useRequest` para gerenciar estado de loading e e
 
 Tela de autenticação do usuário.
 
-**Estado local:** `email`, `password`  
-**Hook de loading/erro:** `useRequest`  
-**Autenticação:** `useAuth().signIn()`
+**ViewModel:** `useLogin(navigation, route)` — `src/hooks/useLogin.js`
 
-**Validações realizadas:**
+**Retorno do hook:** `{ email, setEmail, password, setPassword, loading, error, clearError, handleLogin, handleNavigateToRecover }`
+
+**Validações (no hook):**
 - Campos em branco
 - Formato de e-mail (regex)
 - Senha com mínimo de 6 caracteres
 
 **Fluxo:**
 1. Usuário preenche e-mail e senha e toca em "Entrar"
-2. Validações locais são aplicadas; erros exibidos via `setError` do `useRequest`
+2. `handleLogin()` aplica validações locais via `setError`
 3. `signIn(email, password)` do `AuthContext` é chamado — faz login, salva token, carrega perfil
 4. Navegação é resetada para `Tab` (DrawerNavigator)
 
-**Tratamento de erros via `run(fn, onError)`:**
+**Tratamento de erros:**
 - Status 400 → "Email inválido. Por favor, verifique o formato do seu e-mail."
 - Status 401 → "Credenciais inválidas. Por favor, verifique seu e-mail e senha."
 
@@ -180,9 +207,7 @@ Tela de autenticação do usuário.
 
 ### 5.2 Recuperação de Senha (`src/screens/recoverPasswordScreen.js`)
 
-Tela de solicitação de código de verificação para redefinição de senha.
-
-**Estado local:** `email`
+Tela de solicitação de código de verificação para redefinição de senha. Sem hook ViewModel — possui apenas `useState('')` para o campo de e-mail, sem chamadas à API.
 
 **Fluxo:**
 1. Usuário informa o e-mail
@@ -194,7 +219,7 @@ Tela de solicitação de código de verificação para redefinição de senha.
 
 ### 5.3 Redefinição de Senha (`src/screens/resetPasswordScreen.js`)
 
-Tela para inserção do código recebido e da nova senha.
+Tela para inserção do código recebido e da nova senha. Sem hook ViewModel — integração com API ainda não implementada.
 
 **Estado local:** `email`, `verificationCode`, `newPassword`, `confirmPassword`
 
@@ -209,11 +234,11 @@ Tela para inserção do código recebido e da nova senha.
 
 Dashboard principal com o progresso do plano de exercícios.
 
-**Estado local:** `progressValue`, `exercise`  
-**Hook de loading/erro:** `useRequest`  
-**Nome do usuário:** lido de `useAuth().user.name`
+**ViewModel:** `useHome(navigation)` — `src/hooks/useHome.js`
 
-**Dados carregados via `homeService.getHomeInfo()`:**
+**Retorno do hook:** `{ progressValue, exercise, logoutVisible, setLogoutVisible, progressMessage, loading, error, clearError, handleStartExercise, handleLogout, user }`
+
+**Dados carregados via `ApiService.getHomeInfo()`:**
 
 ```json
 {
@@ -231,9 +256,9 @@ Dashboard principal com o progresso do plano de exercícios.
 ```
 
 **Funcionalidades:**
-- Indicador circular de progresso com mensagens dinâmicas por faixa (0–25%, 25–75%, 75%+)
-- Card do próximo exercício com botão "Iniciar exercício"
-- Botão físico de voltar (Android) exibe `ConfirmModal` perguntando se o usuário deseja sair; ao confirmar, chama `signOut()` e reseta a navegação para `LoginView`
+- Indicador circular de progresso com mensagens dinâmicas por faixa (0–25%, 25–75%, 75%+) via `progressMessage`
+- Card do próximo exercício com botão que chama `handleStartExercise(prescriptionItemId)`
+- Botão físico de voltar (Android) exibe `ConfirmModal`; ao confirmar, chama `handleLogout()` que executa `signOut()` e reseta a navegação para `LoginView`
 - Dados carregados uma vez na montagem (`useEffect` com deps `[]`)
 
 ---
@@ -242,19 +267,20 @@ Dashboard principal com o progresso do plano de exercícios.
 
 Exibe os detalhes e o passo a passo do exercício prescrito.
 
-**Parâmetro de rota:** `prescriptionItemId`
+**Parâmetro de rota:** `prescriptionItemId` (`route.params?.props`)
 
-**Estado local:** `exerciseDetails`, `metrics`, `steps`, `successVisible`  
-**Hook de loading/erro:** `useRequest`
+**ViewModel:** `useExercise(prescriptionItemId, navigation)` — `src/hooks/useExercise.js`
+
+**Retorno do hook:** `{ exerciseDetails, metrics, steps, successVisible, handleSuccessClose, loading, error, clearError, handleComplete }`
 
 **Fluxo:**
 1. Verifica via `STORAGE_KEYS.EXERCISE(id)` se o exercício já foi concluído; se sim, redireciona para `FeedbackView`
-2. Carrega detalhes via `exerciseService.getExerciseByPrescriptionItemId()`
+2. Carrega detalhes via `ApiService.getExerciseByPrescriptionItemId()`
 3. Exibe repetições (`metrics.volume`), séries (`metrics.series`) e lista de passos
-4. Ao tocar em "Concluir Exercício":
+4. Ao tocar em "Concluir Exercício", `handleComplete()`:
    - Salva status de conclusão com timestamp no `AsyncStorage`
    - Exibe `SuccessModal`
-   - Navega para `FeedbackView`
+   - `handleSuccessClose()` navega para `FeedbackView`
 
 ---
 
@@ -262,16 +288,17 @@ Exibe os detalhes e o passo a passo do exercício prescrito.
 
 Coleta o feedback de dor/esforço após a conclusão do exercício.
 
-**Parâmetro de rota:** `prescriptionItemId`
+**Parâmetro de rota:** `prescriptionItemId` (`route.params?.props`)
 
-**Estado local:** `selectedLevel`, `observations`, `successVisible`  
-**Hook de loading/erro:** `useRequest`
+**ViewModel:** `useFeedback(prescriptionItemId, navigation)` — `src/hooks/useFeedback.js`
 
-**Escala de feedback:**
+**Retorno do hook:** `{ selectedLevel, setSelectedLevel, observations, setObservations, successVisible, handleSuccessClose, loading, error, clearError, handleSend, FEEDBACK_LEVELS }`
+
+**Escala de feedback (constante `FEEDBACK_LEVELS` exportada do hook):**
 
 | Nível | Título | Valor enviado |
 |---|---|---|
-| 1 | Sem Dor | 0 |
+| 1 | Sem Dor/Esforço | 0 |
 | 2 | Leve | 2 |
 | 3 | Moderado | 5 |
 | 4 | Intenso | 8 |
@@ -279,10 +306,10 @@ Coleta o feedback de dor/esforço após a conclusão do exercício.
 
 **Fluxo:**
 1. Usuário seleciona o nível e opcionalmente adiciona observações
-2. `exerciseService.completeExercise(prescriptionItemId)` retorna o `executionId`
-3. `feedbackService.sendFeedback(executionId, { score, notes })` envia o feedback
+2. `handleSend()` chama `ApiService.completeExercise()` → obtém `executionId`
+3. `ApiService.sendFeedback(executionId, { score, notes })` envia o feedback
 4. O exercício é removido do `AsyncStorage` via `STORAGE_KEYS.EXERCISE(id)`
-5. `SuccessModal` é exibido e o usuário é redirecionado para `Tab`
+5. `SuccessModal` é exibido; `handleSuccessClose()` reseta a navegação para `Tab`
 
 ---
 
@@ -290,12 +317,14 @@ Coleta o feedback de dor/esforço após a conclusão do exercício.
 
 Calendário de consultas agendadas.
 
-**Estado local:** `selectedDate`, `appointmentsByDate`
+**ViewModel:** `useOnlineCalendar()` — `src/hooks/useOnlineCalendar.js`
+
+**Retorno do hook:** `{ selectedDate, appointments, handleDayPress }`
 
 **Funcionalidades:**
 - Calendário interativo (`react-native-calendars`) com localização em português
-- Seleção de data exibe os agendamentos do dia via `AppointmentCard`
-- Datas com consultas são marcadas com indicador visual
+- `handleDayPress(date)` atualiza `selectedDate` e busca appointments com cache por data
+- Lista do dia exibida via `AppointmentCard`
 - Dados atualmente provenientes de `appointments.js` (mock)
 
 ---
@@ -304,10 +333,11 @@ Calendário de consultas agendadas.
 
 Gerenciamento do perfil do usuário.
 
-**Estado local:** `userInfo`, `studentInfo`, `photoSource`  
-**Hook de loading/erro:** `useRequest`
+**ViewModel:** `useProfile()` — `src/hooks/useProfile.js`
 
-**Dados carregados via `homeService.getUserInfo()`:**
+**Retorno do hook:** `{ userInfo, studentInfo, photoSource, loading, error, clearError, handleUploadPhoto }`
+
+**Dados carregados via `ApiService.getUserInfo()`:**
 
 ```json
 {
@@ -318,11 +348,11 @@ Gerenciamento do perfil do usuário.
 
 **Funcionalidades:**
 - Exibe avatar com a inicial do nome como placeholder
-- Botão de câmera para substituir a foto de perfil
-- Upload de foto via `expo-image-picker` com `FormData` (campo `file`, `multipart/form-data`)
-- Download e cache da foto via `expo-file-system`; o cache é limpo a cada acesso à tela com `FileSystem.deleteAsync()`
-- `useFocusEffect` recarrega os dados sempre que a tela recebe foco
-- A lógica de fetch (`fetchUserData`) é compartilhada entre `loadUserInfo` e `uploadProfilePhoto` para evitar chamadas aninhadas de `run`
+- Toque no avatar chama `handleUploadPhoto()` que abre o `ImagePicker`
+- Upload de foto via `FormData` (campo `file`, `multipart/form-data`)
+- Download e cache da foto via `expo-file-system`; o cache é limpo a cada acesso via `FileSystem.deleteAsync()`
+- `useFocusEffect` no hook recarrega os dados sempre que a tela recebe foco
+- `BASE_URL` importada de `src/services/http.js`
 
 ---
 
@@ -332,7 +362,7 @@ Gerenciamento do perfil do usuário.
 
 Wrapper do `Text` do React Native com suporte a variantes tipográficas e fontes Nunito.
 
-**Props:** `variant`, `style`, `children`
+**Props:** `variant`, `color`, `style`, `children`
 
 **Variantes disponíveis:**
 
@@ -350,7 +380,7 @@ Wrapper do `Text` do React Native com suporte a variantes tipográficas e fontes
 
 ### 6.2 CustomTextInput (`src/components/CustomTextInput.js`)
 
-Wrapper do `TextInput` com bordas estilizadas e toggle de visibilidade de senha.
+Wrapper do `TextInput` com bordas estilizadas e toggle de visibilidade de senha. O componente é exportado como `default` com o nome interno `CustomInput`.
 
 **Props:** `value`, `onChangeText`, `placeholder`, `secureTextEntry`, `multiline`
 
@@ -374,11 +404,11 @@ Wrapper do `react-native-circular-progress-indicator`.
 
 ### 6.4 AlertBanner (`src/components/AlertBanner.js`)
 
-Banner horizontal com destaque lateral colorido para avisos.
+Banner horizontal com destaque colorido para avisos.
 
 **Props:** `title` (padrão: "Aviso!"), `message`
 
-- Borda esquerda verde (`GREEN_1`)
+- Barra de acento `GREEN_1` posicionada absolutamente atrás do card, criando o efeito visual de destaque
 - Fundo branco com sombra
 
 ---
@@ -412,10 +442,10 @@ Container genérico com estilo de cartão.
 
 Card do próximo exercício exibido na HomeScreen.
 
-**Props:** `exercise` (`{ name, region1, objective, exercisesCount }`), `onPress`
+**Props:** `exercise` (`{ name, region1, objective, exercisesCount, onPress }`)
 
-- Exibe nome, região do corpo, objetivo e quantidade de exercícios
-- Botão "Iniciar exercício" chama `onPress`
+- Exibe quantidade de exercícios, nome, região do corpo e objetivo
+- Botão "Iniciar exercício" chama `exercise.onPress()` — o handler é parte do objeto `exercise`, não uma prop separada
 
 ---
 
@@ -483,8 +513,7 @@ Exibe um passo numerado nas instruções do exercício.
 
 **Props:** `step` (número), `text` (instrução)
 
-- Badge numerado com fundo `GREEN_2`
-- Texto alinhado à direita do badge
+- Layout em linha (`flexDirection: row`): badge numerado com fundo `GREEN_2` à esquerda, texto ocupando o espaço restante à direita
 
 ---
 
@@ -492,7 +521,7 @@ Exibe um passo numerado nas instruções do exercício.
 
 ### 7.1 useRequest (`src/hooks/useRequest.js`)
 
-Centraliza o gerenciamento de loading e erro em operações assíncronas. Todas as telas utilizam este hook no lugar de declarações manuais de `useState` para loading e erro.
+Hook base que centraliza o gerenciamento de loading e erro. Todos os hooks ViewModel o utilizam internamente.
 
 **Retorna:** `{ loading, error, clearError, setError, run }`
 
@@ -513,22 +542,90 @@ run(fn, onError?)
 - `fn`: função assíncrona a executar
 - `onError`: pode ser uma **string** (mensagem fixa), uma **função** `(e) => string` (para tratar códigos de status HTTP), ou omitido (usa `e.message`)
 
-**Exemplo de uso:**
+---
 
-```js
-const { loading, error, clearError, run } = useRequest();
+### 7.2 useLogin (`src/hooks/useLogin.js`)
 
-await run(
-  () => ApiService.getHomeInfo(),
-  'Erro ao carregar a home'
-);
+ViewModel da tela de Login.
 
-// Com tratamento de status HTTP (ex.: login):
-await run(
-  () => signIn(email, password),
-  (e) => e.status === 401 ? 'Credenciais inválidas' : 'Erro ao fazer login'
-);
-```
+**Assinatura:** `useLogin(navigation, route)`
+
+**Retorna:** `{ email, setEmail, password, setPassword, loading, error, clearError, handleLogin, handleNavigateToRecover }`
+
+- `handleLogin()` — valida campos e chama `signIn()` do `AuthContext`
+- `handleNavigateToRecover()` — navega para `RecoverPasswordView`
+- Lê `route.params?.sessionExpiredMessage` via `useEffect` e exibe via `setError`
+
+---
+
+### 7.3 useHome (`src/hooks/useHome.js`)
+
+ViewModel da tela Home.
+
+**Assinatura:** `useHome(navigation)`
+
+**Retorna:** `{ progressValue, exercise, logoutVisible, setLogoutVisible, progressMessage, loading, error, clearError, handleStartExercise, handleLogout, user }`
+
+- Carrega `ApiService.getHomeInfo()` no mount
+- `progressMessage` — texto dinâmico baseado em faixas de progresso
+- `useFocusEffect` captura o botão físico de voltar (Android) e exibe `ConfirmModal`
+- `handleLogout()` — chama `signOut()` e reseta navegação para `LoginView`
+
+---
+
+### 7.4 useExercise (`src/hooks/useExercise.js`)
+
+ViewModel da tela de Exercício.
+
+**Assinatura:** `useExercise(prescriptionItemId, navigation)`
+
+**Retorna:** `{ exerciseDetails, metrics, steps, successVisible, handleSuccessClose, loading, error, clearError, handleComplete }`
+
+- Verifica conclusão prévia no `AsyncStorage` via `STORAGE_KEYS.EXERCISE(id)`
+- `handleComplete()` — salva timestamp no `AsyncStorage` e exibe `SuccessModal`
+- `handleSuccessClose()` — navega para `FeedbackView`
+
+---
+
+### 7.5 useFeedback (`src/hooks/useFeedback.js`)
+
+ViewModel da tela de Feedback.
+
+**Assinatura:** `useFeedback(prescriptionItemId, navigation)`
+
+**Retorna:** `{ selectedLevel, setSelectedLevel, observations, setObservations, successVisible, handleSuccessClose, loading, error, clearError, handleSend, FEEDBACK_LEVELS }`
+
+- `FEEDBACK_LEVELS` — array de opções de feedback também exportado como named export para uso direto
+- `handleSend()` — `completeExercise()` → `sendFeedback()` → remove do `AsyncStorage`
+- `handleSuccessClose()` — reseta navegação para `Tab`
+
+---
+
+### 7.6 useProfile (`src/hooks/useProfile.js`)
+
+ViewModel da tela de Perfil.
+
+**Assinatura:** `useProfile()`
+
+**Retorna:** `{ userInfo, studentInfo, photoSource, loading, error, clearError, handleUploadPhoto }`
+
+- `fetchUserData()` — carrega perfil e faz download da foto via `FileSystem` (limpando cache antes)
+- `useFocusEffect` recarrega dados ao focar a tela
+- `handleUploadPhoto()` — solicita permissão, abre `ImagePicker`, envia via `FormData`
+- `BASE_URL` importada de `src/services/http.js`
+
+---
+
+### 7.7 useOnlineCalendar (`src/hooks/useOnlineCalendar.js`)
+
+ViewModel da tela de Consultas.
+
+**Assinatura:** `useOnlineCalendar()`
+
+**Retorna:** `{ selectedDate, appointments, handleDayPress }`
+
+- `handleDayPress(date)` — atualiza `selectedDate` e popula cache local por data
+- `appointments` — lista do dia selecionado, derivada do cache ou de `getAppointmentsByDate()`
 
 ---
 

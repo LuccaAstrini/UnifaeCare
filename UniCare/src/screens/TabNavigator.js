@@ -35,14 +35,6 @@ function CustomDrawerContent(props) {
                 labelStyle={styles.subLabel}
                 {...itemProps}
             />
-
-            <DrawerItem
-                label="Progresso"
-                icon={({ size }) => <Ionicons name="bar-chart" size={size} color={GREEN_2} />}
-                focused={currentRoute === 'Progresso'}
-                onPress={() => props.navigation.navigate('Progresso')}
-                {...itemProps}
-            />
             <DrawerItem
                 label="Perfil"
                 icon={({ size }) => <Ionicons name="person" size={size} color={GREEN_2} />}
@@ -90,7 +82,6 @@ export default function DrawerNavigator({ navigation }) {
             <Drawer.Screen name="Home" component={HomeScreen} />
             <Drawer.Screen name="ConsultasOnline" component={OnlineCalendar} />
             <Drawer.Screen name="Historico" component={HomeScreen} />
-            <Drawer.Screen name="Progresso" component={HomeScreen} />
             <Drawer.Screen name="Perfil" component={Profile} />
         </Drawer.Navigator>
     );
