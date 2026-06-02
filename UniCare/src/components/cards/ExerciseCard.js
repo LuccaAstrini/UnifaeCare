@@ -4,7 +4,7 @@ import CustomText from "../CustomText";
 import { GRAY_1, GREEN_1, GREEN_2, GREEN_3, GREEN_4 } from "../../styles/Colors";
 import PositiveButton from "../buttons/PositiveButton";
 
-export default function ExerciseCard({ exercise }) {
+export default function ExerciseCard({ exercise, isPending }) {
     return (
         <Card style={{ width: '90%' }}>
             <View style={{
@@ -40,7 +40,7 @@ export default function ExerciseCard({ exercise }) {
                     </CustomText>
                 </View>
 
-                <PositiveButton title="Iniciar exercício" onPress={() => { exercise.onPress() }} variant='label' />
+                <PositiveButton title={isPending ? "Avaliar exercício" : "Iniciar exercício"} onPress={() => { exercise.onPress() }} variant='label' />
             </Card>
         </Card>
     )

@@ -67,8 +67,11 @@ export default function Profile() {
                 <CustomText variant="bodyLarge" style={{ fontWeight: 'bold', fontSize: 18 }}>
                     Responsáveis
                 </CustomText>
-                {vm.studentInfo !== null ? (
-                    <InfoCard value={vm.studentInfo?.name} />
+                {vm.studentInfo !== null && vm.coordinatorInfo !== null ? (
+                    <>
+                        <InfoCard value={vm.studentInfo?.name} />
+                        <InfoCard value={vm.coordinatorInfo?.name} />
+                    </>
                 ) : (
                     <CustomText variant="bodyMedium"></CustomText>
                 )}

@@ -4,12 +4,16 @@ import { useFocusEffect } from '@react-navigation/native';
 import ApiService from '../services/api';
 import { useRequest } from './useRequest';
 import { useAuth } from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storageKeys';
 
 export function useHome(navigation) {
     const [progressValue, setProgressValue] = useState(0);
+    const [motivationMessage, setMotivationMessage] = useState('');
     const [exercise, setExercise] = useState(null);
     const [logoutVisible, setLogoutVisible] = useState(false);
     const { loading, error, clearError, run } = useRequest();
+    const [feedbackPending, setFeedbackPending] = useState(false);
     const { user, signOut } = useAuth();
 
     const progressMessage = progressValue < 25
@@ -32,6 +36,8 @@ export function useHome(navigation) {
     useEffect(() => {
         run(async () => {
             const { nextExercise, plan } = await ApiService.getHomeInfo();
+            const motivationData = await ApiService.getHomeInfo();
+            setMotivationMessage(motivationData.motivation.message)
             setProgressValue(plan.percentCompleted);
             if (nextExercise) {
                 setExercise({
@@ -39,14 +45,22 @@ export function useHome(navigation) {
                     region1: nextExercise.axis,
                     objective: nextExercise.objective,
                     exercisesCount: plan.totalExercises,
-                    onPress: () => handleStartExercise(nextExercise.prescriptionItemId),
+                    onPress: () => { handleStartExercise(nextExercise.prescriptionItemId) },
                 });
+
+                const hasDone = await AsyncStorage.getItem(STORAGE_KEYS.EXERCISE(nextExercise.prescriptionItemId));
+
+                setFeedbackPending(hasDone !== null);
             }
         }, 'Erro ao carregar informações da home');
     }, []);
 
-    function handleStartExercise(prescriptionItemId) {
-        navigation.navigate('exercise', { props: prescriptionItemId });
+    async function handleStartExercise(prescriptionItemId) {
+        if (feedbackPending) {
+            navigation.navigate('FeedbackView', { props: prescriptionItemId });
+        } else {
+            navigation.navigate('exercise', { props: prescriptionItemId });
+        }
     }
 
     async function handleLogout() {
@@ -56,6 +70,7 @@ export function useHome(navigation) {
     }
 
     return {
+        motivationMessage,
         progressValue,
         exercise,
         logoutVisible,
@@ -67,5 +82,6 @@ export function useHome(navigation) {
         handleStartExercise,
         handleLogout,
         user,
+        feedbackPending
     };
 }

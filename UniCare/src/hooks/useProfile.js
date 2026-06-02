@@ -11,14 +11,17 @@ export function useProfile() {
     const [userInfo, setUserInfo] = useState(null);
     const [studentInfo, setStudentInfo] = useState(null);
     const [photoSource, setPhotoSource] = useState(null);
+    const [coordinatorInfo, setCoordinatorInfo] = useState(null);
     const { loading, error, clearError, run } = useRequest();
 
     async function fetchUserData() {
         const tempData = await ApiService.getUserInfo();
         const userData = tempData.profile;
         const studentData = tempData.responsibleStudent;
+        const coordinatorData = tempData.coordinator;
         setUserInfo(userData);
         setStudentInfo(studentData);
+        setCoordinatorInfo(coordinatorData);
         if (userData.id) {
             const token = await SecureStore.getItemAsync('api_token');
             const localUri = FileSystem.cacheDirectory + 'profile_photo.jpg';
@@ -67,5 +70,5 @@ export function useProfile() {
         }, 'Erro ao enviar a foto');
     }
 
-    return { userInfo, studentInfo, photoSource, loading, error, clearError, handleUploadPhoto };
+    return { userInfo, studentInfo, coordinatorInfo, photoSource, loading, error, clearError, handleUploadPhoto };
 }

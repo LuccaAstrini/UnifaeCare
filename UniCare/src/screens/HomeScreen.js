@@ -28,7 +28,18 @@ export default function HomeScreen({ navigation }) {
         onConfirm={vm.handleLogout}
       />
       <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
-        {vm.exercise !== null && <ExerciseCard exercise={vm.exercise} />}
+
+        <Card style={{ width: '90%' }}>
+          <CustomText variant="header" style={{ marginBottom: 15 }}>
+            Frase do dia
+          </CustomText>
+
+          <CustomText variant="bodyMedium">
+            {vm.motivationMessage}
+          </CustomText>
+        </Card>
+
+        {vm.exercise !== null && <ExerciseCard exercise={vm.exercise} isPending={vm.feedbackPending} />}
         <Card style={{ width: '90%' }}>
           <CustomText variant="bodyMedium" style={{ fontWeight: 'bold' }}>
             Progresso
