@@ -56,7 +56,10 @@ export function useHome(navigation) {
     }, []);
 
     async function handleStartExercise(prescriptionItemId) {
-        if (feedbackPending) {
+
+        const hasDone = await AsyncStorage.getItem(STORAGE_KEYS.EXERCISE(prescriptionItemId));
+
+        if (hasDone !== null) {
             navigation.navigate('FeedbackView', { props: prescriptionItemId });
         } else {
             navigation.navigate('exercise', { props: prescriptionItemId });

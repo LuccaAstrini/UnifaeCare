@@ -34,11 +34,11 @@ export default function OnlineCalendar() {
                     <View style={styles.legend}>
                         <View style={styles.legendItem}>
                             <View style={[styles.legendDot, { backgroundColor: GREEN_4 }]} />
-                            <CustomText variant="label" color={GRAY_1}>Consulta Presencial</CustomText>
+                            <CustomText variant="label" color={GRAY_1}>Consulta Online</CustomText>
                         </View>
                         <View style={styles.legendItem}>
                             <View style={[styles.legendDot, { backgroundColor: ORAGEN_1 }]} />
-                            <CustomText variant="label" color={GRAY_1}>Consulta Online</CustomText>
+                            <CustomText variant="label" color={GRAY_1}>Consulta Presencial</CustomText>
                         </View>
                     </View>
 
